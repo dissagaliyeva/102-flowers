@@ -1,0 +1,4 @@
+https://arxiv.org/pdf/1801.06146v5.pdf
+https://github.com/fastai/fastai/blob/43001e17ba469308e9688dfe99a891018bcf7ad4/courses/dl2/imdb_scripts/finetune_lm.py#L132
+https://arxiv.org/abs/1803.09820
+https://github.com/facebookresearch/ClassyVision/issues/289
