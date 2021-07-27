@@ -37,10 +37,17 @@ def batch(iterable, dictionary, n_batch, actual_order):
         ax.set_title(label, fontsize=14)
 
 
-def hist(path='data/train'):
-    df = get_folders(path)
-    plt.figure(figsize=(25, 10))
-    sns.displot(x='name', y='length', data=df)
+def hist(path='data/train', show_description=True, targets=None):
+    df, folder_dict = get_folders(path)
+    
+    if show_description:
+        if df["length"].nunique() == 1:
+            print(f'There are {df["length"].unique()[0]} images in each folder')
+        else:
+            for name, length in folder_dict.items():
+                print(f'There are {length} images in {targets[name]}')
+    
+    sns.displot(x='name', y='length', data=df).set(title='Distribution of Length in Folders')
     plt.tick_params(
         axis='x',
         which='both',
@@ -55,4 +62,4 @@ def get_folders(path):
     folders_dict = {}
     for folder in os.listdir(path):
         folders_dict[folder] = len(os.listdir(path + '/' + folder))
-    return pd.DataFrame({'name': folders_dict.keys(), 'length': folders_dict.values()})
+    return pd.DataFrame({'name': folders_dict.keys(), 'length': folders_dict.values()}), folders_dict
