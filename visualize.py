@@ -1,3 +1,5 @@
+import json
+
 import matplotlib.pyplot as plt
 import torch
 import torchvision.transforms as transforms
@@ -6,6 +8,10 @@ import pandas as pd
 import seaborn as sns
 import os
 import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+from PIL import Image
+import random
 
 sns.set()
 
@@ -96,6 +102,7 @@ def train_valid(train, valid):
     plt.plot(np.arange(len(train)), train, label='Train')
     plt.xlabel('epoch')
     plt.ylabel('loss')
+    plt.legend()
     plt.show()
 
 
@@ -112,3 +119,71 @@ def show_test_results(test_dict):
     fig = px.histogram(second_half.sort_values(by='accuracy', ascending=False),
                        x='name', y='accuracy', title=f'Bottom Accuracy Distribution (%)')
     fig.show()
+    return first_half, second_half
+
+
+def side_by_side(results:list, n_plots=2):
+    x_axis = np.arange(len(results[0]['train_loss']))
+    titles = [results[x]['optim'] for x in range(n_plots)]
+
+    fig = make_subplots(rows=1, cols=n_plots, shared_yaxes=True, shared_xaxes=True,
+                        subplot_titles=titles)
+    for idx in range(n_plots):
+        fig.add_trace(go.Scatter(x=x_axis, y=results[idx]['train_loss'],
+                                 marker=dict(color='Blue'), name=f'{results[idx]["optim"]} train'), row=1, col=idx+1)
+        fig.add_trace(go.Scatter(x=x_axis, y=results[idx]['valid_loss'],
+                                 marker=dict(color='Red'), name=f'{results[idx]["optim"]} valid'), row=1, col=idx+1)
+    fig.show()
+
+
+def visualize_most_confused(target, confused_dict=None, top_k=3, label_inverse=None):
+    paths = lambda x: get_image(label_inverse[x])
+
+    temp = pd.DataFrame({'name': confused_dict[target].keys(), 'confused': confused_dict[target].values()})
+    temp['paths'] = temp.name.apply(paths)
+
+    temp.sort_values(by='confused', ascending=False, inplace=True)
+
+    fig = px.histogram(temp, x='name', y='confused', title=f'Confused {target} with')
+    fig.show()
+
+    target_path = paths(target)
+    top_paths = temp.iloc[:top_k, :]
+    top_k = len(top_paths)
+
+    plt.title(f'Showing {target} with TOP {top_k} confusions')
+    plt.imshow(Image.open(target_path))
+    plt.show()
+
+    fig = plt.figure(figsize=(10, 10))
+    for idx in range(top_k):
+        ax = fig.add_subplot(1, top_k + 1, idx + 1, xticks=[], yticks=[])
+        plt.imshow(Image.open(top_paths.iloc[idx, 2]))
+        ax.set_title(top_paths.iloc[idx, 0])
+    plt.show()
+
+
+def get_image(idx):
+    return random.choice([f'data/train/{idx}/{x}' for x in os.listdir(f'data/train/{idx}')])
+
+
+def get_confusions(confused, label_dict, actual_order):
+    corrected = {}
+    for k, v in confused.items():
+        for val in v:
+            if val == int(k): continue
+            l1 = get_item(int(k), label_dict, actual_order)
+            l2 = get_item(val, label_dict, actual_order)
+
+            if l1 in corrected:
+                if l2 in corrected[l1]:
+                    corrected[l1][l2] += 1
+                else:
+                    corrected[l1][l2] = 0
+            else:
+                corrected[l1] = {}
+    return corrected
+
+
+def get_item(idx, label_dict, actual_order):
+    return label_dict[int(actual_order[idx])]

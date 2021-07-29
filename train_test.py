@@ -1,7 +1,6 @@
 import torch
 from torch import nn
 from torch import optim
-import torchvision.models as models
 
 import helper
 import visualize
@@ -26,7 +25,7 @@ def set_params(n_epochs: int, model, label_dict, actual_order,
     lr_decay = None
     if optim_name == 'SGD':
         optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9)
-    elif optim_name == 'Ada':
+    elif optim_name == 'Adagrad':
         optimizer = optim.Adagrad(model.parameters(), lr=1e-4)
 
     if learning_decay:
@@ -39,8 +38,8 @@ def set_params(n_epochs: int, model, label_dict, actual_order,
     # visualize.show_test_results(test_dict)
 
     print(f'''========== Ending Training ==========
-    Train loss: {train_loss[0]}
-    Valid loss: {valid_loss[0]}
+    Train loss: {train_loss[-1]}
+    Valid loss: {valid_loss[-1]}
     Test  loss: {test_loss}
     ''')
 
