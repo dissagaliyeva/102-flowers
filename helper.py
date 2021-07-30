@@ -75,30 +75,32 @@ def transfer(dfs: list, df):
         shutil.move(filename, to_path.strip())
 
 
-def create_loaders(n_batches):
+def create_loaders(n_batches, transformations=None):
     """
 
+    :param transformations:
     :param n_batches:
     :return:
     """
-    # create different transformation for train and test/validation sets
-    transformations = {
-        'train': transforms.Compose([
-            transforms.Resize(226),
-            transforms.CenterCrop(224),
-            transforms.RandomRotation((-10, 10)),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225])
-        ]),
-        'test_valid': transforms.Compose([
-            transforms.Resize(226),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225])
-        ])
-    }
+    if transformations is None:
+        # create different transformation for train and test/validation sets
+        transformations = {
+            'train': transforms.Compose([
+                transforms.Resize(226),
+                transforms.CenterCrop(224),
+                transforms.RandomRotation(degrees=(-10, 10)),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+            ]),
+            'test_valid': transforms.Compose([
+                transforms.Resize(226),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+            ])
+        }
 
     # get the images from folders
     train_holder = datasets.ImageFolder('data/train', transform=transformations['train'])

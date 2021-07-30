@@ -48,7 +48,7 @@ def batch(iterable, dictionary, n_batch, actual_order, cuda=False, model=None):
     # plot the images in the batch, along with the corresponding labels
     fig = plt.figure(figsize=(40, 10))
     fig.suptitle(f'Batch of {n_batch}', fontsize=25)
-    for idx in np.arange(20):
+    for idx in np.arange(n_batch):
         ax = fig.add_subplot(2, 10, idx + 1, xticks=[], yticks=[])
         label = dictionary[int(actual_order[targets[idx]])]
 
@@ -122,17 +122,17 @@ def show_test_results(test_dict):
     return first_half, second_half
 
 
-def side_by_side(results:list, n_plots=2):
+def side_by_side(results: list, n_plots, names):
     x_axis = np.arange(len(results[0]['train_loss']))
-    titles = [results[x]['optim'] for x in range(n_plots)]
+    titles = [names[x] for x in range(n_plots)]
 
     fig = make_subplots(rows=1, cols=n_plots, shared_yaxes=True, shared_xaxes=True,
                         subplot_titles=titles)
     for idx in range(n_plots):
         fig.add_trace(go.Scatter(x=x_axis, y=results[idx]['train_loss'],
-                                 marker=dict(color='Blue'), name=f'{results[idx]["optim"]} train'), row=1, col=idx+1)
+                                 marker=dict(color='Blue'), name=f'{names[idx]} train'), row=1, col=idx+1)
         fig.add_trace(go.Scatter(x=x_axis, y=results[idx]['valid_loss'],
-                                 marker=dict(color='Red'), name=f'{results[idx]["optim"]} valid'), row=1, col=idx+1)
+                                 marker=dict(color='Red'), name=f'{names[idx]} valid'), row=1, col=idx+1)
     fig.show()
 
 
