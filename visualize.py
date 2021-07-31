@@ -70,23 +70,24 @@ def batch(iterable, dictionary, n_batch, actual_order, cuda=False, model=None):
 
 def hist(path='data/train', show_description=True, targets=None):
     df, folder_dict = get_folders(path)
-    
+    different = True
     if show_description:
         if df["length"].nunique() == 1:
+            different = False
             print(f'There are {df["length"].unique()[0]} images in each folder')
         else:
             for name, length in folder_dict.items():
                 print(f'There are {length} images in {targets[name]}')
-    
-    sns.displot(x='name', y='length', data=df).set(title='Distribution of Length in Folders')
-    plt.tick_params(
-        axis='x',
-        which='both',
-        bottom=False,
-        labelbottom=False
-    )
-    plt.xlabel('folders')
-    plt.show()
+    if different:
+        sns.displot(x='name', y='length', data=df).set(title='Distribution of Length in Folders')
+        plt.tick_params(
+            axis='x',
+            which='both',
+            bottom=False,
+            labelbottom=False
+        )
+        plt.xlabel('folders')
+        plt.show()
 
 
 def get_folders(path):
@@ -123,7 +124,7 @@ def show_test_results(test_dict):
 
 
 def side_by_side(results: list, n_plots, names):
-    x_axis = np.arange(len(results[0]['train_loss']))
+    x_axis = np.arange(1, len(results[0]['train_loss']) + 1)
     titles = [names[x] for x in range(n_plots)]
 
     fig = make_subplots(rows=1, cols=n_plots, shared_yaxes=True, shared_xaxes=True,

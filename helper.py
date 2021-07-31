@@ -2,8 +2,12 @@ import os
 import shutil
 
 import re
+import torch
+from PIL import Image
 from torch.utils.data import DataLoader
 from torchvision import transforms, datasets
+
+import torchvision.models as models
 
 
 def create_folders(df):
