@@ -12,7 +12,7 @@ import numpy as np
 def set_params(n_epochs: int, model, label_dict, actual_order,
                use_cuda: bool, save_path: str, learning_decay=False,
                criterion_name='CrossEntropy', optim_name='SGD', n_batch=20,
-               transformations=None, lr=0.01, nesterov=True):
+               transformations=None, lr=0.01, nesterov=True, custom=False):
     """
     This function sets the parameters and runs the whole process of training, validation, and testing. It saves the
     results for further visualization and comparison.
@@ -29,6 +29,7 @@ def set_params(n_epochs: int, model, label_dict, actual_order,
         :param transformations: Transformations to use (otherwise manually created)
         :param lr:              Learning Rate to use
         :param nesterov:        Whether to use Nesterov's optimization with SGD
+        :param custom:          Whether to use custom optimizer
     :return: A dictionary containing all results
     """
 
@@ -51,12 +52,17 @@ def set_params(n_epochs: int, model, label_dict, actual_order,
     criterion = nn.CrossEntropyLoss()
     optimizer = None
     lr_decay = None
-    if optim_name == 'SGD':
-        optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, nesterov=nesterov)
-    elif optim_name == 'Adagrad':
-        optimizer = optim.Adagrad(model.parameters(), lr=lr)
-    elif optim_name == 'Adam':
-        optimizer = optim.Adam(model.parameters(), lr=lr, amsgrad=True)
+
+    # use custom optimizer if specified
+    if custom:
+        optimizer = optimizer
+    else:
+        if optim_name == 'SGD':
+            optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, nesterov=nesterov)
+        elif optim_name == 'Adagrad':
+            optimizer = optim.Adagrad(model.parameters(), lr=lr)
+        elif optim_name == 'Adam':
+            optimizer = optim.Adam(model.parameters(), lr=lr, amsgrad=True)
 
     # instantiate a learning decay scheduler
     if learning_decay:
