@@ -16,19 +16,19 @@ def set_params(n_epochs: int, model, label_dict, actual_order,
     """
     This function sets the parameters and runs the whole process of training, validation, and testing. It saves the
     results for further visualization and comparison.
-        :param n_epochs: Number of epochs to run
-        :param model: The model to use
-        :param label_dict: The dictionary that stores number:category values
-        :param actual_order: The true order of folders
-        :param use_cuda: Whether to run on GPU or CPU
-        :param save_path: The path to store best results
-        :param learning_decay: Whether to use learning decay scheduler
-        :param criterion_name: The loss function to use
-        :param optim_name: The optimizer to use
-        :param n_batch: Number of batches
+        :param n_epochs:        Number of epochs to run
+        :param model:           The model to use
+        :param label_dict:      The dictionary that stores number:category values
+        :param actual_order:    The true order of folders
+        :param use_cuda:        Whether to run on GPU or CPU
+        :param save_path:       The path to store best results
+        :param learning_decay:  Whether to use learning decay scheduler
+        :param criterion_name:  The loss function to use
+        :param optim_name:      The optimizer to use
+        :param n_batch:         Number of images to have in the DataLoader
         :param transformations: Transformations to use (otherwise manually created)
-        :param lr: Learning Rate to use
-        :param nesterov: Whether to use Nesterov's optimization with SGD
+        :param lr:              Learning Rate to use
+        :param nesterov:        Whether to use Nesterov's optimization with SGD
     :return: A dictionary containing all results
     """
 
@@ -85,14 +85,14 @@ def train(n_epochs: int, loaders: dict, model, optimizer,
           criterion, use_cuda: bool, save_path: str, learning_decay):
     """
     This function trains the model and shows the progress.
-        :param n_epochs: Number of epochs to run
-        :param loaders:  Dictionary of loaders
-        :param model:    The model to use
-        :param optimizer: Selected optimizer to perform backpropagation
-        :param criterion: Loss function
-        :param use_cuda:  Whether to run on GPU or CPU
-        :param save_path: The path to store best results
-        :param learning_decay: The Learning Decay Scheduler
+        :param n_epochs:        Number of epochs to run
+        :param loaders:         Dictionary of loaders
+        :param model:           The model to use
+        :param optimizer:       Selected optimizer to perform backpropagation
+        :param criterion:       Loss function
+        :param use_cuda:        Whether to run on GPU or CPU
+        :param save_path:       The path to store best results
+        :param learning_decay:  The Learning Decay Scheduler
     :return: The accuracy of the model and the model itself
     """
     # create empty lists to store values
