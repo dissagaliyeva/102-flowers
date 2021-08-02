@@ -16,7 +16,7 @@ It is considerately smaller than most of the other models with only 20 million p
 <br>
 
 ---
-<br>
+
 <img src="images/differential.png" width="400px" align="right"/>
 The notebook contains experimentations with different model instantiations, in particular, various optimizers. 
 There are three of them used: Stochastic Gradient Descent (Nesterov's Accelerated Gradients), Adagrad and Adam. It's challenging to find the correct optimizers, 
