@@ -19,9 +19,7 @@ It is considerately smaller than most of the other models with only 20 million p
 
 <img src="images/differential.png" width="400px" align="right"/>
 The notebook contains experimentations with different model instantiations, in particular, various optimizers. 
-There are three of them used: Stochastic Gradient Descent (Nesterov's Accelerated Gradients), Adagrad and Adam. It's challenging to find the correct optimizers, 
-so I wanted to see the actual differences in prediction before settling with a specific one. In addition to these experimentations, fellowship.ai's requirement was to use 
-Discriminative Learning Rates. Thus, all models were trained using that technique along with Exponential Learning Decay Scheduler to boost accuracy. 
+There are three of them used: <a href="https://paperswithcode.com/method/sgd">Stochastic Gradient Descent</a> (<a href="https://arxiv.org/abs/1607.01981">Nesterov's Accelerated Gradients</a>), <a href="https://paperswithcode.com/method/adagrad">Adagrad</a> and <a href="https://paperswithcode.com/method/adam">Adam </a>. It's challenging to find the correct optimizers,  so I wanted to see the actual differences in prediction before settling with a specific one. In addition to these experimentations, fellowship.ai's requirement was to use Discriminative Learning Rates. Thus, all models were trained using that technique along with Exponential Learning Decay Scheduler to boost accuracy. 
 
 To better understand how Discriminative Learning Rates work, the following image might help (right). 
 To implement this technique, we need to use smaller learning rates at convolutional layers and bigger ones in the fully-connected ones. Doing so boosted the performance. 
