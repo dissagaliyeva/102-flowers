@@ -12,7 +12,7 @@ import numpy as np
 def set_params(n_epochs: int, model, label_dict, actual_order,
                use_cuda: bool, save_path: str, learning_decay=False,
                criterion_name='CrossEntropy', optim_name='SGD', n_batch=20,
-               transformations=None, lr=0.01, nesterov=True, custom=False):
+               transformations=None, lr=0.01, nesterov=True):
     """
     This function sets the parameters and runs the whole process of training, validation, and testing. It saves the
     results for further visualization and comparison.
@@ -38,9 +38,9 @@ def set_params(n_epochs: int, model, label_dict, actual_order,
     Loss function: {criterion_name}
     Optimizer: {optim_name}
     Batch size: {n_batch}
-    Path: {save_path}
     Epochs: {n_epochs}
     Learning rate: {lr}
+    Path: {save_path}
     ''')
 
     # load train, validation, and test sets with specified batches and transformations
@@ -52,17 +52,31 @@ def set_params(n_epochs: int, model, label_dict, actual_order,
     criterion = nn.CrossEntropyLoss()
     optimizer = None
     lr_decay = None
-
-    # use custom optimizer if specified
-    if custom:
-        optimizer = optimizer
-    else:
-        if optim_name == 'SGD':
-            optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, nesterov=nesterov)
-        elif optim_name == 'Adagrad':
-            optimizer = optim.Adagrad(model.parameters(), lr=lr)
-        elif optim_name == 'Adam':
-            optimizer = optim.Adam(model.parameters(), lr=lr, amsgrad=True)
+    momentum = 0.9
+    if optim_name == 'SGD':
+        optimizer = optim.SGD([
+                {'params': model.layer1.parameters(), 'lr': lr/10, 'momentum': momentum, 'nesterov': True},
+                {'params': model.layer2.parameters(), 'lr': lr/10, 'momentum': momentum, 'nesterov': True},
+                {'params': model.layer3.parameters(), 'lr': lr/10, 'momentum': momentum, 'nesterov': True},
+                {'params': model.layer4.parameters(), 'lr': lr/10, 'momentum': momentum, 'nesterov': True},
+                {'params': model.fc.parameters(), 'lr': lr, 'momentum': momentum, 'nesterov': nesterov}],
+                lr=lr, momentum=momentum, nesterov=True)
+    elif optim_name == 'Adagrad':
+        optimizer = optim.Adagrad([
+            {'params': model.layer1.parameters(), 'lr': lr / 10},
+            {'params': model.layer2.parameters(), 'lr': lr / 10},
+            {'params': model.layer3.parameters(), 'lr': lr / 10},
+            {'params': model.layer4.parameters(), 'lr': lr / 10},
+            {'params': model.fc.parameters(), 'lr': lr}],
+            lr=lr)
+    elif optim_name == 'Adam':
+        optimizer = optim.Adam([
+            {'params': model.layer1.parameters(), 'lr': lr / 10, 'amsgrad': True},
+            {'params': model.layer2.parameters(), 'lr': lr / 10, 'amsgrad': True},
+            {'params': model.layer3.parameters(), 'lr': lr / 10, 'amsgrad': True},
+            {'params': model.layer4.parameters(), 'lr': lr / 10, 'amsgrad': True},
+            {'params': model.fc.parameters(), 'lr': lr, 'amsgrad': True}],
+            lr=lr, amsgrad=True)
 
     # instantiate a learning decay scheduler
     if learning_decay:
